@@ -1,6 +1,4 @@
-bashcms
-=======
-
-micro CMS written in bash
+README
+=================
 
 comming soon
