@@ -18,7 +18,7 @@ FIN
 echo "Content-Type: text/html"
 echo
 find "$pages" -name categories          |
-xargs grep -l "$word"                   |
+xargs grep -l -- "$word"                |
 sed 's;.*/pages/\(.*\)/categories;\1;'  |
 xargs -i@ cat $dir/cache/@.title        |
 mojihame -lLIST $tmp-html -
