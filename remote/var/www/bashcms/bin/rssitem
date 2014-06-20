@@ -1,0 +1,26 @@
+#!/bin/bash
+dir=$(dirname $0)/..
+tmp=/tmp/$$
+
+page="$1"
+[ -e "$dir/pages/$page/html" ] || exit 1
+
+grep -v "^$" "$dir/pages/$page/html" |
+head -n 4                            |
+sed 's/<[^>]*>//g' > $tmp-nude
+
+dirdate=$(self 1.1.14 <<< "$page" | dayslash "yyyymmdd HH:MM:SS" 1)
+rssdate=$(LANG=C date -d "$dirdate" "+%a, %d %b %Y %H:%M:%S +0900")
+
+cat << FIN
+<item>
+    <title>$(head -n 1 $tmp-nude)</title>
+    <link>$url/?p=$page</link>
+    <description>
+        $(tail -n +2 $tmp-nude | tr -d '/n/t ')
+    </description>
+    <pubDate>$rssdate</pubDate>
+</item>
+FIN
+
+rm $tmp-*

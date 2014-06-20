@@ -1,0 +1,29 @@
+<h1>bashCMS</h1>
+
+<h2>bashCMSとは？</h2>
+<p>
+bashCMSとは、bashで組んだ簡易CMSです。
+特になにかパッケージがある訳ではありません。
+本を読んでご自身で作ってください。
+</p>
+
+<h2>その他</h2>
+<p>
+bashCMSのイメージキャラクターは、ちんじゅうちゃん
+<img alt="ちんじゅうちゃん" src="chinjyu.jpg">です。
+</p>
+
+<p>
+使い方は、<a href="dummy.pdf" target="_blank">dummy.pdf</a>
+をご覧下さい、と言いたいですが、この本を読んでください。
+</p>
+
+<h2>外部リンク</h2>
+<li>
+    <a href="http://www.usptomo.com" target="_blank">USP友の会</a>
+</li>
+
+<p>
+bashCMSの詳細については<a href="/whats_bashCMS">What's bashCMS?</a>
+をご覧下さい。
+</p>

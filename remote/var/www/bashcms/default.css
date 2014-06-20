@@ -1,0 +1,46 @@
+* {margin:0; padding:0; }
+body { max-width:1000px; }
+article, nav, header, footer, aside { display:block; float:left; }
+footer { width:100%; clear:both; text-align:center; }
+ul { margin-left:30px; }
+a { color:red; text-decoration:none;}
+nav li { display:block; float:left; }
+
+#page-header { text-align:center; width:100%; padding:20px 0px; }
+#page-header a { color:black; }
+#page-header li { padding:3px; border-bottom:1px black solid;
+    border-left:1px black solid; margin:3px; }
+
+#article { padding:20px; min-width:300px; max-width:600px; }
+
+#article-header { width:100%; font-size:70%; color:white; background-color:#555; }
+#article-header a { color:white; }
+
+#upload-time { float:right; text-align:right; }
+
+.diary-nav li{ display:block; float:left; padding:0px 5px; }
+
+#article-body { max-width:75%; min-width:320px; clear:both; }
+#article-body h1 { font-size:200%; padding:0px 20px; margin-bottom:0.2em;}
+#article-body h2 { font-size:120%; padding:0.2em 13px 0.4em;
+padding:3px 20px; margin:15px 0px; background-color:#EEE; }
+#article-body h3{ font-size:100%; padding:5px 18px; margin:15px 0px; }
+#article-body h3:after{content:"~~~"}
+#article-body h3:before{content:"~~~"}
+#article-body { min-width:300px; max-width:600px; }
+#article-body p { padding-left:15px; padding-top:10px; padding-bottom:10px; }
+#article-body table{ margin:3px; border:1px black solid;border-collapse:collapse; }
+#article-body th{ border:1px black solid; background-color:#EEE; }
+#article-body td{ border:1px black solid; }
+
+#article-footer { width:100%; color:white; font-size:70%;
+    background-color:#555; margin:10px 0px; }
+#article-footer a { color:white; }
+
+#widgets { width:300px; margin:20px; float:right; }
+#widgets h1{ font-weight:normal; width:100%; font-size:100%;
+    padding:0px 20px; background-color:#555; color:white; }
+#widgets h2{ font-weight:normal; width:100%; font-size:80%;
+    padding:0px 20px; background-color:#EEE; color:black; }
+#widgets a{ color:black; font-size:80%; }
+#widgets aside{ width:260px; margin:0px 20px; padding-bottom:20px; }
