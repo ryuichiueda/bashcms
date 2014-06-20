@@ -1,0 +1,19 @@
+#!/bin/bash
+tmp=/tmp/$$
+
+mkfifo $tmp-records
+mkfifo $tmp-data
+
+tr -dc '[:print:]\n'            |
+tee $tmp-records                |
+sed 's;\].*;;'                  |
+sed 's;.*\[;;'                  |
+tr '/' ' '                      |
+sed 's/:/ /'                    |
+date -f - "+%Y%m%d %H%M%S"      |
+awk '{a[NR] = $0}END{for(i=1;i<=NR;i++){print a[i]}}' > $tmp-data &
+
+awk '{a[NR] = $0}END{for(i=1;i<=NR;i++){print a[i]}}' $tmp-records |    
+paste -d ' ' $tmp-data -
+
+rm -f $tmp-*

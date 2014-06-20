@@ -1,0 +1,9 @@
+#!/bin/bash
+
+dir=$(dirname $0)/..
+pages=/var/www/bashcms/pages
+
+page=$(ls -f $pages | grep -v '^\.' | sort -R | head -n 1)
+title=$(head -n 1 $pages/$page/html | sed 's;<[/]*h1>;;g')
+
+$dir/bin/tweet "(TEST) $title | http://test.usptomo.com/?p=$page" &> /dev/null

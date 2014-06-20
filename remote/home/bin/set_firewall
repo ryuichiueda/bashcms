@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#残っている設定を全部消す
+iptables -F
+iptables -X
+
+#デフォルトのポリシー（入るものを拒み、出るものを許可）
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+#pingの受付
+iptables -A INPUT -p icmp -j ACCEPT
+
+#ループバックの許可
+iptables -A INPUT -i lo -j ACCEPT
+
+#使うポートをあける
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+#セッション確立後のパケットを通す
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#設定保存
+iptables-save

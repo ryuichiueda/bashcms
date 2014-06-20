@@ -1,0 +1,79 @@
+#!/bin/bash -vx
+tmp=/tmp/$$
+[ -z "$*" ] && exit 1
+
+###################################
+#変数の設定
+
+#トークンの類
+API_KEY=""
+API_SECRET=""
+ACCESS_TOKEN=""
+ACCESS_TOKEN_SECRET=""
+
+#エンコーディングルール
+enc () {
+    nkf -wMQx | sed 's/=$//' | tr '=' '%' | tr -d '\n' |
+    sed -e 's/%7E/~/g' -e 's/%5F/_/g' -e 's/%2D/-/g' -e 's/%2E/./g'
+}
+
+#送信先
+URL=https://api.twitter.com/1.1/statuses/update.json
+ENC_URL=$(enc <<< "$URL")
+
+#ツイートの読み込みとエンコード
+TW=$(enc <<< "$*" | tr -d '\n')
+############################################
+#パラメータ設定
+cat << FIN > $tmp-params
+oauth_consumer_key $API_KEY
+oauth_nonce $(date +%s%N)
+oauth_signature_method HMAC-SHA1
+oauth_timestamp $(date +%s)
+oauth_token $ACCESS_TOKEN
+oauth_version 1.0
+status $TW
+FIN
+
+###############################################
+#oauthシグネチャを作る
+
+#署名キーを作成
+echo "POST&"${ENC_URL}"&" > $tmp-head
+
+sort $tmp-params                |
+#行末に%26（アンド）をつけ、空白を%3D（イコール）に変換
+sed -e 's/$/\&/' -e 's/ /=/'    |
+enc                             |
+#一番最後の&をとる
+sed 's/%26$//'                  |
+#頭に署名キーをつける
+cat $tmp-head -                 |
+#改行が一個入ってしまうので取る
+tr -d '\n'                      |
+#エンコード
+openssl sha1 -hmac $API_SECRET'&'$ACCESS_TOKEN_SECRET -binary      |
+openssl base64                  > $tmp-key
+
+###############################################
+#ヘッダ文字列の作成
+
+enc < $tmp-key                                          |
+awk '{print "oauth_signature",$0}'                      |
+cat $tmp-params -                                       |
+grep -v "^status"                                       |
+sort                                                    |
+#項目 値の並びを改行して縦一列に並び替える
+tr ' ' '\n'                                             |
+#縦一列を今度は横一列にして 項目=値,項目=値,...の形式に
+awk 'NR%2==1{print $1 "="}NR%2==0{print $1 ","}'        |
+tr -d '\n'                                              |
+#一番最後のカンマが余計
+sed 's/,$//'    > $tmp-header-str
+
+#########################################
+#出力!
+curl -H "Authorization : OAuth $(cat $tmp-header-str)" \
+     -d "status=$TW" "$URL"
+
+rm -f $tmp-*

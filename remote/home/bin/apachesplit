@@ -1,0 +1,36 @@
+#!/bin/bash
+dir=$(dirname $0)
+work=/home/ueda/work
+tmp=/tmp/$$
+
+### 下準備 ###
+tr -dc '[:print:]\n'                        |
+#\を%エンコーディング
+sed 's;\\\\;%5C;g'                          |
+#エスケープされたダブルクォートを%エンコーディング
+sed 's;\\";%22;g'                           |
+#空のデータを埋める
+sed 's/""/" "/g'                            |
+#一気に正規化。区切り文字を"に
+sed 's;^\(..*\) \(..*\) \(..*\) \[\(..*\)\] "\(..*\)" \(..*\) \(..*\) "\(..*\)" "\(..*\)"$;\1"[\4]"\5"\6"\7"\8"\9;'                       |
+#頭にIDをつける
+awk '{print sprintf("%09d",NR) "\"" $0}'    |
+#アンダーバーと空白のエスケープ処理
+sed 's/_/\\_/g'                             |
+sed 's/ /_/g'                               > $tmp-data
+[ "$(tr -d '0 ' <<< ${PIPESTATUS[@]})" = "" ] || exit 1
+
+### データを切り分ける ###
+mkdir -p $work                                             &&
+awk '-F"' '{print $1,$2}' $tmp-data > $work/ip             &&
+awk '-F"' '{print $1,$4}' $tmp-data > $work/request        &&
+awk '-F"' '{print $1,$5}' $tmp-data > $work/status         &&
+awk '-F"' '$7!="-"{print $1,$7}' $tmp-data > $work/referer &&
+awk '-F"' '{print $1,$8}' $tmp-data > $work/agent          &&
+awk '-F"' '{print $1,$3}' $tmp-data     |
+tr '_' ' '                              |
+$dir/apachetime                         |
+awk '{print $3,$1,$2}'                  > $work/time
+[ "$(tr -d '0 ' <<< ${PIPESTATUS[@]})" = "" ] || exit 1
+
+rm $tmp-*

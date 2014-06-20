@@ -1,0 +1,21 @@
+#!/bin/bash
+tmp=/tmp/$$
+
+#標準入力からのログを中間ファイルに落としながら処理
+tr -dc '[:print:]\n' |
+tee $tmp-records     |
+#日付だけ抽出
+sed 's;\].*;;'       |
+sed 's;.*\[;;'       |
+tr '/' ' '           |
+sed 's/:/ /'         |
+date -f - "+%Y%m%d %H%M%S" > $tmp-date
+[ "$(tr -d '0 ' <<< ${PIPESTATUS[@]})" = "" ] || exit 1
+
+#ログの行数と処理結果の行数があっているか確認
+[ "$(wc -l < $tmp-date)" = "$(wc -l < $tmp-records)" ] || exit 1
+
+#変換結果の右にログをくっつける
+paste -d ' ' $tmp-date $tmp-records
+
+rm -f $tmp-*
