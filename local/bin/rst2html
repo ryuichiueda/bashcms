@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rst2html.py			|
+awk '/<h1/,/<\/body>/'		|
+ctail -2			|
+sed 's/ class="[^"]*"//g'

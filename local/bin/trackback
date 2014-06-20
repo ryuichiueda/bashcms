@@ -1,0 +1,38 @@
+#!/bin/bash -xv
+tmp=/tmp/$$
+
+enc () {
+	nkf -wMQx | sed 's/=$//' | tr '=' '%' | tr -d '\n' |
+	sed -e 's/%7E/~/g' -e 's/%5F/_/g' -e 's/%2D/-/g' -e 's/%2E/./g'\
+	-e 's/%3D/=/g' -e 's/%26/\&/g'
+}
+
+pagedir=$(dirname $0)/../pages
+page=$(basename $1)
+[ "${page}" != "" ] || exit 1
+target=$2
+url="http://test.usptomo.com/?p=$page"
+blog_name="bashCMS"
+
+[ -d "$pagedir/${page}" ] || exit 1
+
+grep '<h1>' $pagedir/$page/html		|
+sed 's;^.*<h1>\(.*\)</h1>.*$;\1;'	> $tmp-title
+
+grep -v "<h1>" $pagedir/$page/html	|
+head					|
+sed 's/<[^<]*>//g'			|
+tr -d '<>"&'				> $tmp-excerpt
+
+{
+	echo "title="$(cat $tmp-title)
+	echo "url="$url
+	echo "blog_name="$(cat $tmp-title) "|" $blog_name
+	echo "excerpt="$(tr '\n' ' ' < $tmp-excerpt)
+}		|
+tr '\n' '&'	|
+enc		> $tmp-out
+
+curl -d "$(cat $tmp-out)" $2
+
+rm -f $tmp-*

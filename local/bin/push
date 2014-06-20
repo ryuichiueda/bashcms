@@ -1,0 +1,26 @@
+#!/bin/bash -xv
+pagedir=$(dirname $0)/../pages
+remote=somehost.hogehoge.com
+
+#ファイルアップロード
+rsync -av --delete --exclude '.*' "$pagedir/" "$remote:/var/www/bashcms/pages/"
+
+#rssを作る
+curl http://$remote/rssmake.cgi
+
+#categoryキャッシュ作り
+find $pagedir -name categories	|
+xargs grep "."			|
+#./../pages//20131003173705_zzv/categories:未分類
+sed 's;/categories:; ;'		|
+sed 's;^.*/;;'			|
+ssh $remote 'cat > /tmp/categories.all'
+
+#検索用キャッシュ作り
+find $pagedir -name html	|
+xargs grep "."			|
+sed 's;/html:;:;'		|
+sed 's;^[^:]*/;;'		|
+ssh $remote 'cat > /tmp/search.all'
+
+ssh $remote 'mv /tmp/{categories,search}.all /var/www/bashcms/cache/'

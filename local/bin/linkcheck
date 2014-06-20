@@ -1,0 +1,38 @@
+#!/bin/bash
+
+USAGE(){
+	echo "usage: linkcheck <dir>"
+	exit 1
+}
+[ "$#" -eq 0 ] && USAGE >&2
+
+ERROR_CHECK(){
+	[ "$(echo ${PIPESTATUS[@]} | tr -d ' 0')" = "" ] && return
+	echo "$1" >&2
+	exit 1
+}
+
+dir="$1"
+[ -d "$dir" ]      ; ERROR_CHECK "no directory"
+[ -f "$dir/html" ] ; ERROR_CHECK "no html file"
+
+cat "$dir/html"					|
+#hrefあるいはsrc属性を取り出す
+grep -o -E '(href|src)="[^"]+"'			|
+#ダブルクォートの中身を抽出
+gawk '-F"' '{print $2}'				|
+#重複除去
+sort -u						|
+while read f ; do
+	#URLの場合curlで存在を確認、その他はpages内に存在するか確認
+	if grep -q ':' <<< $f ; then
+		curl $f &> /dev/null || echo $f
+	elif grep -q '^/' <<< $f ; then
+		[ -e "$dir/../$f" ] || echo $f
+	else
+		[ -e "$dir/$f" ] || echo $f
+	fi
+done
+ERROR_CHECK "unknown error"
+
+exit 0

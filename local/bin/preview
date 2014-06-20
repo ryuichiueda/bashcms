@@ -1,0 +1,12 @@
+#!/bin/bash
+
+draftdir=$(dirname $0)/../drafts
+pagedir=$(dirname $0)/../pages
+page=$(basename $1)
+dayhms=$(date +%Y%m%d%H%M%S)
+host=somehosts.hogehoge.com
+
+[ "${page}" != "" ] &&
+[ -d "$draftdir/$page" ] &&
+rsync -av "$draftdir/$page/" "$host:/var/www/bashcms/pages/$page/"
+open -a "/Applications/Google Chrome.app" "http://$host/?p=$page"

@@ -1,0 +1,7 @@
+<h1>ネギの惑星</h1>
+
+<h2>青ネギ</h2>
+<img src="green_negi.jpg" />
+
+<h2>白ネギ</h2>
+<img src="white_negi.jpg" />
