@@ -1,7 +1,0 @@
-#!/bin/bash -vx
-
-for w in {a..z}{a..z}{a..z} ; do 
-	sleep 0.1
-	./newdraft $w
-	./diarycommit $w
-done
