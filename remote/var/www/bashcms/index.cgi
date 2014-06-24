@@ -6,7 +6,7 @@ exec 2> $dir/../www-data/$(basename $0).$(date +%Y%m%d%H%M%S).$$
 #GETの文字列から記事ディレクトリ名を得る
 page=$(tr -dc 'a-zA-Z0-9_' <<< "${QUERY_STRING:2}")
 
-#日記記事のリストを作る       <- 12行目まで追加
+#日記記事のリストを作る
 ls -f "$dir/pages/"     |
 grep -E "^[0-9]{14}_"   |
 sort                    > $tmp-diarylist
